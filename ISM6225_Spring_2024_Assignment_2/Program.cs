@@ -103,7 +103,7 @@ namespace ISM6225_Spring_2024_Assignment_2
                     return 0;
                     int i = 0;
                     
-                    // iterate the for loop 
+                    // iterate the loop 
                     for (int j = 1; j < nums.Length; j++)
                     {
                         if (nums[j] != nums[i]) //when j is not equal to i
