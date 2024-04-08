@@ -98,9 +98,22 @@ namespace ISM6225_Spring_2024_Assignment_2
         public static int RemoveDuplicates(int[] nums)
         {
             try
-            {
-                // Write your code here and you can modify the return value according to the requirements
-                return 0;
+            {       //if array length is zero
+                    if (nums.Length == 0) 
+                    return 0;
+                    int i = 0;
+                    
+                    // iterate the loop
+                    for (int j = 1; j < nums.Length; j++)
+                    {
+                        if (nums[j] != nums[i]) //when j is not equal to i
+                        {
+                            i++; //increment i
+                            nums[i] = nums[j];
+                        }
+                    }
+                    return i + 1;
+            
             }
             catch (Exception)
             {
@@ -134,8 +147,25 @@ namespace ISM6225_Spring_2024_Assignment_2
         {
             try
             {
-                // Write your code here and you can modify the return value according to the requirements
-                return new List<int>();
+                int lastNonZeroFoundAt = 0;
+                // If the current element is not 0, then we need to
+                // append it just in front of last non 0 element we found. 
+                for (int i = 0; i < nums.Length; i++)
+                {
+                    if (nums[i] != 0)
+                    {
+                        nums[lastNonZeroFoundAt++] = nums[i];
+                    }
+                }
+                // After we have finished processing new elements,
+                // all the non-zero elements are already at beginning of array.
+                // We just need to fill remaining array with 0's.
+                for (int i = lastNonZeroFoundAt; i < nums.Length; i++)
+                {
+                    nums[i] = 0;
+                }
+                return nums;
+                
             }
             catch (Exception)
             {
@@ -185,14 +215,39 @@ namespace ISM6225_Spring_2024_Assignment_2
         {
             try
             {
-                // Write your code here and you can modify the return value according to the requirements
-                return new List<IList<int>>();
+                IList<IList<int>> result = new List<IList<int>>();
+                Array.Sort(nums);
+                for (int i = 0; i < nums.Length - 2; i++)
+                {
+                    if (i > 0 && nums[i] == nums[i - 1]) continue; // Skip same results
+                    int j = i + 1, k = nums.Length - 1;
+                    while (j < k) //if j less than k
+                    {
+                        if (nums[i] + nums[j] + nums[k] == 0) 
+                        {
+                            result.Add(new List<int> { nums[i], nums[j], nums[k] });
+                            while (j < k && nums[j] == nums[j + 1]) j++; // Skip same results
+                            while (j < k && nums[k] == nums[k - 1]) k--; // Skip same results
+                            j++; k--;
+                        }
+                        else if (nums[i] + nums[j] + nums[k] > 0)
+                        {
+                            k--; //decrement k
+                        }
+                        else
+                        {
+                            j++; //increment i
+                        }
+                    }
+                }
+                return result;
             }
             catch (Exception)
             {
                 throw;
             }
         }
+
 
         /*
 
@@ -220,14 +275,31 @@ namespace ISM6225_Spring_2024_Assignment_2
         {
             try
             {
-                // Write your code here and you can modify the return value according to the requirements
-                return 0;
+                int maxConsecutiveOnes = 0;
+                int currentConsecutiveOnes = 0;
+                for (int i = 0; i < nums.Length; i++) //itterate the loop
+                {
+                    if (nums[i] == 1) 
+                    {
+                        currentConsecutiveOnes++; 
+                        if (currentConsecutiveOnes > maxConsecutiveOnes) //compare the variables
+                        {
+                            maxConsecutiveOnes = currentConsecutiveOnes;
+                        }
+                    }
+                    else
+                    {
+                        currentConsecutiveOnes = 0;
+                    }
+                }
+                return maxConsecutiveOnes;
             }
             catch (Exception)
             {
                 throw;
             }
         }
+
 
         /*
 
@@ -256,14 +328,25 @@ namespace ISM6225_Spring_2024_Assignment_2
         {
             try
             {
-                // Write your code here and you can modify the return value according to the requirements
-                return 0;
+                int decimalValue = 0;
+                int baseValue = 1;
+
+                while (binary > 0) //intialise while loop
+                {
+                    int lastDigit = binary % 10; //use modules operation
+                    binary = binary / 10; //divide by 10
+                    decimalValue += lastDigit * baseValue;
+                    baseValue = baseValue * 2;//multiply with 2
+                }
+
+                return decimalValue; //return the value
             }
             catch (Exception)
             {
                 throw;
             }
         }
+
 
         /*
 
@@ -294,14 +377,44 @@ namespace ISM6225_Spring_2024_Assignment_2
         {
             try
             {
-                // Write your code here and you can modify the return value according to the requirements
-                return 0;
+                if (nums.Length < 2) return 0;
+                int min = nums.Min(), max = nums.Max();
+                int gap = (max - min - 1) / (nums.Length - 1) + 1;
+                int[] minBuckets = new int[nums.Length - 1];
+                int[] maxBuckets = new int[nums.Length - 1];
+                for (int i = 0; i < nums.Length - 1; i++)
+                {
+                    minBuckets[i] = int.MaxValue;
+                    maxBuckets[i] = int.MinValue;
+                }
+                foreach (int num in nums)
+                {
+                    if (num == min || num == max) continue;
+                    int idx = (num - min) / gap;
+                    minBuckets[idx] = Math.Min(num, minBuckets[idx]);
+                    maxBuckets[idx] = Math.Max(num, maxBuckets[idx]);
+                }
+                int maxGap = int.MinValue;
+                int previousMax = min;
+                for (int i = 0; i < nums.Length - 1; i++)
+                {
+                    if (minBuckets[i] == int.MaxValue && maxBuckets[i] == int.MinValue)
+                        // empty bucket
+                        continue;
+                    // min value minus previous value is the current gap
+                    maxGap = Math.Max(maxGap, minBuckets[i] - previousMax);
+                    // update previous bucket value
+                    previousMax = maxBuckets[i];
+                }
+                maxGap = Math.Max(maxGap, max - previousMax); // updata the final max value gap
+                return maxGap;
             }
             catch (Exception)
             {
                 throw;
             }
         }
+
 
         /*
 
@@ -334,7 +447,14 @@ namespace ISM6225_Spring_2024_Assignment_2
         {
             try
             {
-                // Write your code here and you can modify the return value according to the requirements
+                Array.Sort(nums);
+                for (int i = nums.Length - 3; i >= 0; i--)
+                {
+                    if (nums[i] + nums[i + 1] > nums[i + 2]) // If true, it means they can form a triangle
+                    {
+                        return nums[i] + nums[i + 1] + nums[i + 2]; // Return the sum of the three numbers, which is the perimeter of the triangle
+                    }
+                }
                 return 0;
             }
             catch (Exception)
@@ -388,8 +508,11 @@ namespace ISM6225_Spring_2024_Assignment_2
         {
             try
             {
-                // Write your code here and you can modify the return value according to the requirements
-                return "";
+                while (s.Contains(part)) //use the while loo[
+                {
+                    s = s.Replace(part, ""); //use replace function
+                }
+                return s;
             }
             catch (Exception)
             {
